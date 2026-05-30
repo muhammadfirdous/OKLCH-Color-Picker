@@ -125,7 +125,12 @@ export default function LeftColumn({ state, api }: Props) {
           </div>
         </div>
 
-        <OutputField label="O" name="OKLCH" value={oklchString(state)} api={api} />
+        <OutputField
+          label="O"
+          name={state.model === 'lch' ? 'LCH' : 'OKLCH'}
+          value={oklchString(state)}
+          api={api}
+        />
 
         <div className="field-row with-picker">
           <span className="kbd">R</span>

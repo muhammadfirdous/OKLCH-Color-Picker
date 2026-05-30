@@ -72,17 +72,17 @@ export function formatColorAs(format: FormatId, state: PickerState): string {
   return hex6;
 }
 
-// Always-OKLCH output (independent of the model toggle), e.g.
-// `oklch(0.7049 0.15 349)` — valid CSS and round-trips through the R input.
+// The "O" output: tracks the active model — `oklch(...)` in OKLCH mode,
+// `lch(...)` in LCH mode. Both forms are valid CSS and round-trip through
+// the R input.
 export function oklchString(state: PickerState): string {
-  let l: number, c: number, h: number;
-  if (state.model === 'oklch') {
-    [l, c, h] = [state.L, state.C, state.H];
-  } else {
-    [l, c, h] = OK.srgbToOklch(...currentRGB(state));
-  }
   const aDisp = state.alpha < 1 ? ` / ${fmt(state.alpha, 2)}` : '';
-  return `oklch(${fmt(l, 4)} ${fmt(c, 3)} ${fmt(h, 2)}${aDisp})`;
+  if (state.model === 'lch') {
+    // CIELCH native scale is L 0..100; state stores it normalised 0..1 for
+    // both models, so re-scale here.
+    return `lch(${fmt(state.L * 100, 2)} ${fmt(state.C, 2)} ${fmt(state.H, 2)}${aDisp})`;
+  }
+  return `oklch(${fmt(state.L, 4)} ${fmt(state.C, 3)} ${fmt(state.H, 2)}${aDisp})`;
 }
 
 export interface PreviewInfo {
